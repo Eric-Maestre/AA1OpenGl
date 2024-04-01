@@ -305,7 +305,7 @@ void main() {
 
 		//Compilar shaders
 		ShaderProgram myFirstProgram;
-		myFirstProgram.vertexShader = LoadVertexShader("MyFirstVertexShader.glsl");
+		//myFirstProgram.vertexShader = LoadVertexShader("MyFirstVertexShader.glsl");
 		//myFirstProgram.geometryShader = LoadGeometryShader("FirstGeometryShader.glsl");
 		myFirstProgram.fragmentShader = LoadFragmentShader("MyFirstFragmentShader.glsl");
 
@@ -319,7 +319,8 @@ void main() {
 		//Definimos color para limpiar el buffer de color
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 
-		GLuint vaoPuntos, vboPuntos;
+		GLuint vaoPuntos;
+		GLuint vboSquare, vboRectangle, vboTriangle;
 
 		//Definimos cantidad de vao a crear y donde almacenarlos
 		glGenVertexArrays(1, &vaoPuntos);
@@ -328,35 +329,28 @@ void main() {
 		glBindVertexArray(vaoPuntos);
 
 		//Definimos cantidad de vbo a crear y donde almacenarlos
-		glGenBuffers(1, &vboPuntos);
+		glGenBuffers(1, &vboSquare);
 
 		//Indico que el VBO activo es el que acabo de crear y que almacenará un array. Todos los VBO que genere se asignaran al último VAO que he hecho glBindVertexArray
-		glBindBuffer(GL_ARRAY_BUFFER, vboPuntos);
+		glBindBuffer(GL_ARRAY_BUFFER, vboSquare);
 
 		//Posición X e Y del punto
-		GLfloat punto[] =
+		GLfloat square[] =
 		{
-			-0.5f, +0.5f, -0.5f, // 3
-			+0.5f, +0.5f, -0.5f, // 2
-			-0.5f, -0.5f, -0.5f, // 6
-			+0.5f, -0.5f, -0.5f, // 7
-			+0.5f, -0.5f, +0.5f, // 4
-			+0.5f, +0.5f, -0.5f, // 2
-			+0.5f, +0.5f, +0.5f, // 0
-			-0.5f, +0.5f, -0.5f, // 3
-			-0.5f, +0.5f, +0.5f, // 1
-			-0.5f, -0.5f, -0.5f, // 6
-			-0.5f, -0.5f, +0.5f, // 5
-			+0.5f, -0.5f, +0.5f, // 4
-			-0.5f, +0.5f, +0.5f, // 1
-			+0.5f, +0.5f, +0.5f  // 0
+
+			-0.8, 0.1,0, //0
+			-0.8, -0.1,0, //1
+			-0.6, 0.1,0, //2
+			-0.8, -0.1,0, //3
+			-0.6, -0.1,0 //3
+
 		};
 
 		//Definimos modo de dibujo para cada cara
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		//Ponemos los valores en el VBO creado
-		glBufferData(GL_ARRAY_BUFFER, sizeof(punto), punto, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(square), square, GL_STATIC_DRAW);
 
 		//Indicamos donde almacenar y como esta distribuida la información
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
@@ -365,6 +359,63 @@ void main() {
 		glEnableVertexAttribArray(0);
 
 		//Desvinculamos VBO
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		//VBORectangle
+		glGenBuffers(1, &vboRectangle);
+
+		glBindBuffer(GL_ARRAY_BUFFER, vboRectangle);
+
+		GLfloat rectangle[] =
+		{
+			-0.2f, +0.5f, -0.5f, // 3
+			+0.2f, +0.5f, -0.5f, // 2
+			-0.2f, -0.5f, -0.5f, // 6
+			+0.2f, -0.5f, -0.5f, // 7
+			+0.2f, -0.5f, +0.5f, // 4
+			+0.2f, +0.5f, -0.5f, // 2
+			+0.2f, +0.5f, +0.5f, // 0
+			-0.2f, +0.5f, -0.5f, // 3
+			-0.2f, +0.5f, +0.5f, // 1
+			-0.2f, -0.5f, -0.5f, // 6
+			-0.2f, -0.5f, +0.5f, // 5
+			+0.2f, -0.5f, +0.5f, // 4
+			-0.2f, +0.5f, +0.5f, // 1
+			+0.2f, +0.5f, +0.5f  // 0
+		};
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(rectangle), rectangle, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+
+		glEnableVertexAttribArray(0);
+
+		glBindBuffer(GL_ARRAY_BUFFER,0);
+
+		//VBOTriangle
+
+		glGenBuffers(1, &vboTriangle);
+
+		glBindBuffer(GL_ARRAY_BUFFER, vboTriangle);
+
+		GLfloat triangle[] =
+		{
+			+0.6f, +0.3f, .0f,
+			+0.3f, .0f, .0f
+			+0.9f, .0f, .0f,
+
+		};
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+
+		glEnableVertexAttribArray(0);
+
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		//Desvinculamos VAO
