@@ -402,9 +402,9 @@ void main() {
 
 		GLfloat triangle[] =
 		{
-			+0.6f, +0.3f, .0f,
-			+0.3f, .0f, .0f
-			+0.9f, .0f, .0f,
+			+0.6f, +0.3f, 0.0f,
+			+0.4f, 0.0f, 0.0f,
+			+0.8f, 0.0f, 0.0f
 
 		};
 
@@ -442,7 +442,9 @@ void main() {
 			//Definimos que queremos usar el VAO con los puntos
 			glBindVertexArray(vaoPuntos);
 
-			glm::mat4 modelMatrix = glm::mat4(1.f);
+			//cube rotation
+
+			/*glm::mat4 modelMatrix = glm::mat4(1.f);
 
 			cube.position += cube.forward * cube.velocity;
 			cube.rotation += glm::vec3(0.f, 1.f, 0.f) * cube.angularVelocity;
@@ -457,13 +459,14 @@ void main() {
 
 			modelMatrix = cubeTransMatrix * rotationMatrix * modelMatrix;
 
-			glUniformMatrix4fv(glGetUniformLocation(myFirstCompiledProgram, "transform"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+			glUniformMatrix4fv(glGetUniformLocation(myFirstCompiledProgram, "transform"), 1, GL_FALSE, glm::value_ptr(modelMatrix));*/
 
-			//Definimos que queremos dibujar
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 30);
 
-			//Dejamos de usar el VAO indicado anteriormente
-			glBindVertexArray(0);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 22); 
+			glBindVertexArray(0); 
+
+
+
 
 			//Cambiamos buffers
 			glFlush();
