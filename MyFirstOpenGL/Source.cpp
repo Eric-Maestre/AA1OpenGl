@@ -319,30 +319,37 @@ void main() {
 		//Definimos color para limpiar el buffer de color
 		glClearColor(0.f, 0.f, 0.f, 1.f);
 
-		GLuint vaoPuntos;
-		GLuint vboSquare, vboRectangle, vboTriangle;
-
+		GLuint vaoCubo, vaoPiramide;
+		GLuint vboHexaedro, vboPentaedro;
 		//Definimos cantidad de vao a crear y donde almacenarlos
-		glGenVertexArrays(1, &vaoPuntos);
+		glGenVertexArrays(1, &vaoCubo);
 
 		//Indico que el VAO activo de la GPU es el que acabo de crear
-		glBindVertexArray(vaoPuntos);
+		glBindVertexArray(vaoCubo);
 
 		//Definimos cantidad de vbo a crear y donde almacenarlos
-		glGenBuffers(1, &vboSquare);
+		glGenBuffers(1, &vboHexaedro);
 
 		//Indico que el VBO activo es el que acabo de crear y que almacenará un array. Todos los VBO que genere se asignaran al último VAO que he hecho glBindVertexArray
-		glBindBuffer(GL_ARRAY_BUFFER, vboSquare);
+		glBindBuffer(GL_ARRAY_BUFFER, vboHexaedro);
 
 		//Posición X e Y del punto
-		GLfloat square[] =
+		GLfloat hexa[] =
 		{
-
-			-0.8, 0.1,0, //0
-			-0.8, -0.1,0, //1
-			-0.6, 0.1,0, //2
-			-0.8, -0.1,0, //3
-			-0.6, -0.1,0 //3
+			-0.8f, +0.2f, -0.5f, // 3
+			-0.4f, +0.2f, -0.5f, // 2
+			-0.8f, -0.2f, -0.5f, // 6
+			-0.4f, -0.2f, -0.5f, // 7
+			-0.4f, -0.2f, +0.5f, // 4
+			-0.4f, +0.2f, -0.5f, // 2
+			-0.4f, +0.2f, +0.5f, // 0
+			-0.8f, +0.2f, -0.5f, // 3
+			-0.8f, +0.2f, +0.5f, // 1
+			-0.8f, -0.2f, -0.5f, // 6
+			-0.8f, -0.2f, +0.5f, // 5
+			-0.4f, -0.2f, +0.5f, // 4
+			-0.8f, +0.2f, +0.5f, // 1
+			-0.4f, +0.2f, +0.5f  // 0
 
 		};
 
@@ -350,7 +357,7 @@ void main() {
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		//Ponemos los valores en el VBO creado
-		glBufferData(GL_ARRAY_BUFFER, sizeof(square), square, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(hexa), hexa, GL_STATIC_DRAW);
 
 		//Indicamos donde almacenar y como esta distribuida la información
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
@@ -361,56 +368,43 @@ void main() {
 		//Desvinculamos VBO
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		//VBORectangle
-		glGenBuffers(1, &vboRectangle);
-
-		glBindBuffer(GL_ARRAY_BUFFER, vboRectangle);
-
-		GLfloat rectangle[] =
-		{
-			-0.2f, +0.5f, -0.5f, // 3
-			+0.2f, +0.5f, -0.5f, // 2
-			-0.2f, -0.5f, -0.5f, // 6
-			+0.2f, -0.5f, -0.5f, // 7
-			+0.2f, -0.5f, +0.5f, // 4
-			+0.2f, +0.5f, -0.5f, // 2
-			+0.2f, +0.5f, +0.5f, // 0
-			-0.2f, +0.5f, -0.5f, // 3
-			-0.2f, +0.5f, +0.5f, // 1
-			-0.2f, -0.5f, -0.5f, // 6
-			-0.2f, -0.5f, +0.5f, // 5
-			+0.2f, -0.5f, +0.5f, // 4
-			-0.2f, +0.5f, +0.5f, // 1
-			+0.2f, +0.5f, +0.5f  // 0
-		};
-
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-		glBufferData(GL_ARRAY_BUFFER, sizeof(rectangle), rectangle, GL_STATIC_DRAW);
-
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-
-		glEnableVertexAttribArray(0);
-
-		glBindBuffer(GL_ARRAY_BUFFER,0);
-
+		//Desvinculamos VAOCubo
+		glBindVertexArray(0);
+		
 		//VBOTriangle
 
-		glGenBuffers(1, &vboTriangle);
+		//Definimos cantidad de vao a crear y donde almacenarlos
+		glGenVertexArrays(1, &vaoPiramide);
 
-		glBindBuffer(GL_ARRAY_BUFFER, vboTriangle);
+		//Indico que el VAO activo de la GPU es el que acabo de crear
+		glBindVertexArray(vaoPiramide);
 
-		GLfloat triangle[] =
+		//Definimos cantidad de vbo a crear y donde almacenarlos
+		glGenBuffers(1, &vboPentaedro);
+
+		//Indico que el VBO activo es el que acabo de crear y que almacenará un array. Todos los VBO que genere se asignaran al último VAO que he hecho glBindVertexArray
+		glBindBuffer(GL_ARRAY_BUFFER, vboHexaedro);
+
+		glGenBuffers(1, &vboPentaedro);
+
+		glBindBuffer(GL_ARRAY_BUFFER, vboPentaedro);
+
+		GLfloat penta[] =
 		{
-			+0.6f, +0.3f, 0.0f,
-			+0.4f, 0.0f, 0.0f,
-			+0.8f, 0.0f, 0.0f
-
+			+0.4f, 0.0f,-0.5f, //1
+			+0.8f, 0.0f, -0.5f, //2
+			+0.4f, 0.0f, 0.0f, //3
+			+0.8f, 0.0f, 0.0f,//4
+			+0.6f, +0.3f, -0.25f,//5
+			+0.8f, 0.0f, -0.5f, //2
+			+0.4f, 0.0f,-0.5f, //1
+			+0.4f, 0.0f, 0.0f, //3
+			+0.6f, +0.3f, -0.25f,//5
 		};
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(penta), penta, GL_STATIC_DRAW);
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 
@@ -440,7 +434,41 @@ void main() {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 			//Definimos que queremos usar el VAO con los puntos
-			glBindVertexArray(vaoPuntos);
+			glBindVertexArray(vaoCubo);
+			glUseProgram(myFirstCompiledProgram);
+
+			//Matrices de transformacion
+
+			//Cubo
+			glBindVertexArray(vaoCubo);
+			//glUseProgram(programaCubo);
+
+			//Matrices de transformacion
+			//CalculosCubo();
+			//Paso los uniforms
+			//UniformCubo();
+
+			//Dibujo cubo
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 22);
+
+
+
+
+			//Piramide
+			glBindVertexArray(vaoPiramide);
+			//glUseProgram(programaPiramide);
+
+			//Matrices de transformacion
+			//CalculosPiramide();
+			
+			//Paso los uniforms
+			//UniformPiramide();
+
+			//Dibujo piramide
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 22);
+
+
+
 
 			//cube rotation
 
