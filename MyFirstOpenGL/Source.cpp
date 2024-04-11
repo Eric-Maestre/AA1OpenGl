@@ -299,22 +299,22 @@ void main() {
 
 		//Declarar instancia de Transform
 		Transform cube;
+		Transform cubo, piramide, ortoedro;
 
 		//Declarar vec2 para definir el offset
 		glm::vec2 offset = glm::vec2(0.f, 0.f);
 
 		//Compilar shaders
-		ShaderProgram myFirstProgram;
-		//myFirstProgram.vertexShader = LoadVertexShader("MyFirstVertexShader.glsl");
-		//myFirstProgram.geometryShader = LoadGeometryShader("FirstGeometryShader.glsl");
-		myFirstProgram.fragmentShader = LoadFragmentShader("MyFirstFragmentShader.glsl");
+		ShaderProgram cuboProgram, ciramideProgram, orotedroProgram;
+		cuboProgram.vertexShader = LoadVertexShader("UpAndDownMovement.glsl");
+		cuboProgram.fragmentShader = LoadFragmentShader("UpYellowDownOrange.glsl");
 
 		//Compilar programa
-		GLuint myFirstCompiledProgram;
-		myFirstCompiledProgram = CreateProgram(myFirstProgram);
+		GLuint cuboCompiledProgram;
+		cuboCompiledProgram = CreateProgram(cuboProgram);
 
 		//Obtener referencia a offset
-		GLint offsetReference = glGetUniformLocation(myFirstCompiledProgram, "offset");
+		GLint offsetReference = glGetUniformLocation(cuboCompiledProgram, "offset");
 
 		//Definimos color para limpiar el buffer de color
 		glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -416,7 +416,8 @@ void main() {
 		glBindVertexArray(0);
 
 		//Indicar a la tarjeta GPU que programa debe usar
-		glUseProgram(myFirstCompiledProgram);
+		//Preguntar
+		glUseProgram(cuboCompiledProgram);
 		//glUniformMatrix4fv(glGetUniformLocation(myFirstCompiledProgram, "transform"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
 		//Generamos el game loop
@@ -425,7 +426,7 @@ void main() {
 			GLdouble screenSize[2];
 			glfwGetWindowSize(window, (int*)&screenSize[0], (int*)&screenSize[1]);
 
-			glUniform2dv(glGetUniformLocation(myFirstCompiledProgram, "screenSize"), 1, &screenSize[0]);
+			glUniform2dv(glGetUniformLocation(cuboCompiledProgram, "screenSize"), 1, &screenSize[0]);
 
 			//Pulleamos los eventos (botones, teclas, mouse...)
 			glfwPollEvents();
@@ -435,18 +436,26 @@ void main() {
 
 			//Definimos que queremos usar el VAO con los puntos
 			glBindVertexArray(vaoCubo);
-			glUseProgram(myFirstCompiledProgram);
 
 			//Matrices de transformacion
 
 			//Cubo
 			glBindVertexArray(vaoCubo);
-			//glUseProgram(programaCubo);
+			glUseProgram(cuboCompiledProgram);
 
 			//Matrices de transformacion
 			//CalculosCubo();
 			//Paso los uniforms
 			//UniformCubo();
+			GLuint timeLocation = glGetUniformLocation(cuboCompiledProgram, "time");
+
+			float time = 0.5f;
+			glUniform1f(timeLocation, time);
+
+			GLuint windowSizeLocation = glGetUniformLocation(cuboCompiledProgram, "windowSize");
+
+			float windowSize = WINDOW_HEIGHT; 
+			glUniform1f(windowSizeLocation, windowSize);
 
 			//Dibujo cubo
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 22);
@@ -472,7 +481,7 @@ void main() {
 
 			//cube rotation
 
-			/*glm::mat4 modelMatrix = glm::mat4(1.f);
+		/*	glm::mat4 modelMatrix = glm::mat4(1.f);
 
 			cube.position += cube.forward * cube.velocity;
 			cube.rotation += glm::vec3(0.f, 1.f, 0.f) * cube.angularVelocity;
@@ -487,11 +496,11 @@ void main() {
 
 			modelMatrix = cubeTransMatrix * rotationMatrix * modelMatrix;
 
-			glUniformMatrix4fv(glGetUniformLocation(myFirstCompiledProgram, "transform"), 1, GL_FALSE, glm::value_ptr(modelMatrix));*/
+			glUniformMatrix4fv(glGetUniformLocation(myFirstCompiledProgram, "transform"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 22); 
-			glBindVertexArray(0); 
+			glBindVertexArray(0); */
 
 
 
@@ -502,8 +511,8 @@ void main() {
 		}
 
 		//Desactivar y eliminar programa
-		glUseProgram(0);
-		glDeleteProgram(myFirstCompiledProgram);
+		//glUseProgram(0);
+		//glDeleteProgram(myFirstCompiledProgram);
 
 	}
 	else {
