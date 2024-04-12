@@ -137,7 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="UpYellowDownOrange.glsl" />
-    <None Include="MyFirstGeometryShader.glsl" />
+    <None Include="YRotation.glsl" />
     <None Include="UpAndDownMovement.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

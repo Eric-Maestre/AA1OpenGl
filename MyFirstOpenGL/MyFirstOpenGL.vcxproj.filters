@@ -35,7 +35,7 @@
     <None Include="UpAndDownMovement.glsl">
       <Filter>Shaders\Vertex Shader</Filter>
     </None>
-    <None Include="MyFirstGeometryShader.glsl">
+    <None Include="YRotation.glsl">
       <Filter>Shaders\Geometry Shader</Filter>
     </None>
     <None Include="UpYellowDownOrange.glsl">

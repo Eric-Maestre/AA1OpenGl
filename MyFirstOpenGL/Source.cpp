@@ -28,6 +28,14 @@ struct Transform
 	float angularVelocity = -.05f;
 };
 
+struct GameObject {
+
+	glm::vec3 position = glm::vec3(0.f);
+	glm::vec3 rotation = glm::vec3(0.f);
+	glm::vec3 scale = glm::vec3(1.f);
+};
+
+
 
 void Resize_Window(GLFWwindow* window, int iFrameBufferWidth, int iFrameBufferHeight) {
 
@@ -297,9 +305,8 @@ void main() {
 	//Inicializamos GLEW y controlamos errores
 	if (glewInit() == GLEW_OK) {
 
-		//Declarar instancia de Transform
-		Transform cube;
-		Transform cubo, piramide, ortoedro;
+		//Declarar GameObjects
+		GameObject cubo, piramide, ortoedro;
 
 		//Declarar vec2 para definir el offset
 		glm::vec2 offset = glm::vec2(0.f, 0.f);
@@ -308,6 +315,7 @@ void main() {
 		ShaderProgram cuboProgram, ciramideProgram, orotedroProgram;
 		cuboProgram.vertexShader = LoadVertexShader("UpAndDownMovement.glsl");
 		cuboProgram.fragmentShader = LoadFragmentShader("UpYellowDownOrange.glsl");
+		cuboProgram.geometryShader = LoadGeometryShader("YRotation");
 
 		//Compilar programa
 		GLuint cuboCompiledProgram;
@@ -420,6 +428,8 @@ void main() {
 		glUseProgram(cuboCompiledProgram);
 		//glUniformMatrix4fv(glGetUniformLocation(myFirstCompiledProgram, "transform"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
+
+
 		//Generamos el game loop
 		while (!glfwWindowShouldClose(window)) {
 
@@ -444,18 +454,31 @@ void main() {
 			glUseProgram(cuboCompiledProgram);
 
 			//Matrices de transformacion
-			//CalculosCubo();
+			cubo.position = glm::vec3(-0.5f, 0.f, 0.f);
+			cubo.rotation = glm::vec3(0.f, 0.f, 0.f);
+			cubo.scale = glm::vec3(1.f,1.f,1.f);
+
+			//Generar matrices
+			glm::mat4 cuboTranslationMatrix = GenerateTranslationMatrix(cubo.position);
+			glm::mat4 cuboRotationMatrix = GenerateRotationMatrix(cubo.rotation, cubo.rotation.y);
+			glm::mat4 cuboScaleMatrix = GenerateScaleMatrix(cubo.scale);
+			
+			//Pasar matrices
+			glUniformMatrix4fv(glGetUniformLocation(cuboCompiledProgram, "translationMatrix"), 1, GL_FALSE, glm::value_ptr(cuboTranslationMatrix));
+			glUniformMatrix4fv(glGetUniformLocation(cuboCompiledProgram, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(cuboRotationMatrix));
+			glUniformMatrix4fv(glGetUniformLocation(cuboCompiledProgram, "scaleMatrix"), 1, GL_FALSE, glm::value_ptr(cuboScaleMatrix));
+
+
+
+
 			//Paso los uniforms
 			//UniformCubo();
-			GLuint timeLocation = glGetUniformLocation(cuboCompiledProgram, "time");
+			glUniform2f(glGetUniformLocation(cuboCompiledProgram, "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
+		
 
-			float time = 0.5f;
-			glUniform1f(timeLocation, time);
+			
 
-			GLuint windowSizeLocation = glGetUniformLocation(cuboCompiledProgram, "windowSize");
-
-			float windowSize = WINDOW_HEIGHT; 
-			glUniform1f(windowSizeLocation, windowSize);
+			
 
 			//Dibujo cubo
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 22);

@@ -2,17 +2,22 @@
 
 layout(location = 0) in vec3 posicion;
 
+uniform mat4 translationMatrix;
+uniform mat4 rotationMatrix;
+uniform mat4 scaleMatrix;
+
 uniform float time;
-const float speed = 0.5; 
+uniform float speed;
+
+
 
 void main()
 {
 
-    float yOffset = speed * (mod(time, 2.0) - 1.0);
-    
+    float verticalOffset = speed * time;
+    vec3 newPosition = posicion + vec3(0.0, verticalOffset, 0.0);
 
-    vec3 newPos = posicion;
-    newPos.y += yOffset;
-    
-    gl_Position = vec4(newPos, 1.0);
+
+    mat4 matrix = translationMatrix*rotationMatrix*scaleMatrix;
+    gl_Position = matrix * vec4(newPosition, 1.0);
 }
