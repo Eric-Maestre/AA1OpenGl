@@ -494,12 +494,14 @@ void main() {
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 22);
 
 			//ortoedro
-			glUseProgram(ortoedroCompiledProgram);
+			//glUseProgram(ortoedroCompiledProgram);
 
 
 			//Piramide
 			glBindVertexArray(vaoPiramide);
-			glUseProgram(piramideCompiledProgram);
+
+
+			//glUseProgram(piramideCompiledProgram);
 
 			//Matrices de transformacion
 
