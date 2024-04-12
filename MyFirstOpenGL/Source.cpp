@@ -312,14 +312,20 @@ void main() {
 		glm::vec2 offset = glm::vec2(0.f, 0.f);
 
 		//Compilar shaders
-		ShaderProgram cuboProgram, ciramideProgram, orotedroProgram;
+		ShaderProgram cuboProgram, piramideProgram, orotedroProgram;
 		cuboProgram.vertexShader = LoadVertexShader("UpAndDownMovement.glsl");
 		cuboProgram.fragmentShader = LoadFragmentShader("UpYellowDownOrange.glsl");
-		cuboProgram.geometryShader = LoadGeometryShader("YRotation");
+		cuboProgram.geometryShader = LoadGeometryShader("YRotation.glsl");
 
 		//Compilar programa
 		GLuint cuboCompiledProgram;
 		cuboCompiledProgram = CreateProgram(cuboProgram);
+
+	/*	GLuint ortoedroCompiledProgram;
+		ortoedroCompiledProgram = CreateProgram(orotedroProgram);
+
+		GLuint piramideCompiledProgram;
+		piramideCompiledProgram = CreateProgram(piramideProgram);*/
 
 		//Obtener referencia a offset
 		GLint offsetReference = glGetUniformLocation(cuboCompiledProgram, "offset");
@@ -423,11 +429,23 @@ void main() {
 		//Desvinculamos VAO
 		glBindVertexArray(0);
 
-		//Indicar a la tarjeta GPU que programa debe usar
-		//Preguntar
-		glUseProgram(cuboCompiledProgram);
-		//glUniformMatrix4fv(glGetUniformLocation(myFirstCompiledProgram, "transform"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+		//velocidad movimiento
+		float speed = 0.5f;
 
+		//Matrices de transformacion
+		cubo.position = glm::vec3(-0.5f, 0.f, 0.f);
+		cubo.rotation = glm::vec3(0.f, 0.f, 0.f);
+		cubo.scale = glm::vec3(1.f, 1.f, 1.f);
+
+		//matrices piramide
+		piramide.position = glm::vec3(0.6f, 0.f, 0.f);
+		piramide.rotation = glm::vec3(0.f, 0.f, 0.f);
+		piramide.scale = glm::vec3(1.f, 1.f, 1.f);
+
+		//matrices ortoedro
+		ortoedro.position = glm::vec3(0.f, 0.f, 0.f);
+		ortoedro.rotation = glm::vec3(0.f, 0.f, 0.f);
+		ortoedro.scale = glm::vec3(1.f, 1.f, 1.f);
 
 
 		//Generamos el game loop
@@ -453,48 +471,52 @@ void main() {
 			glBindVertexArray(vaoCubo);
 			glUseProgram(cuboCompiledProgram);
 
-			//Matrices de transformacion
-			cubo.position = glm::vec3(-0.5f, 0.f, 0.f);
-			cubo.rotation = glm::vec3(0.f, 0.f, 0.f);
-			cubo.scale = glm::vec3(1.f,1.f,1.f);
+
+			//Up and down Movement
+			cubo.position.y += speed;
 
 			//Generar matrices
 			glm::mat4 cuboTranslationMatrix = GenerateTranslationMatrix(cubo.position);
 			glm::mat4 cuboRotationMatrix = GenerateRotationMatrix(cubo.rotation, cubo.rotation.y);
 			glm::mat4 cuboScaleMatrix = GenerateScaleMatrix(cubo.scale);
 			
+
 			//Pasar matrices
 			glUniformMatrix4fv(glGetUniformLocation(cuboCompiledProgram, "translationMatrix"), 1, GL_FALSE, glm::value_ptr(cuboTranslationMatrix));
 			glUniformMatrix4fv(glGetUniformLocation(cuboCompiledProgram, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(cuboRotationMatrix));
 			glUniformMatrix4fv(glGetUniformLocation(cuboCompiledProgram, "scaleMatrix"), 1, GL_FALSE, glm::value_ptr(cuboScaleMatrix));
 
-
-
-
 			//Paso los uniforms
-			//UniformCubo();
 			glUniform2f(glGetUniformLocation(cuboCompiledProgram, "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
 		
-
-			
-
-			
 
 			//Dibujo cubo
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 22);
 
-
+			//ortoedro
+			glUseProgram(ortoedroCompiledProgram);
 
 
 			//Piramide
 			glBindVertexArray(vaoPiramide);
-			//glUseProgram(programaPiramide);
+			glUseProgram(piramideCompiledProgram);
 
 			//Matrices de transformacion
-			//CalculosPiramide();
+
+			//generar matrices
+			glm::mat4 piramideTranslationMatrix = GenerateTranslationMatrix(piramide.position);
+			glm::mat4 piramideRotationMatrix = GenerateRotationMatrix(piramide.rotation, piramide.rotation.y);
+			glm::mat4 piramideScaleMatrix = GenerateScaleMatrix(piramide.scale);
+
+			//Todavia no funcional
+			
+			/*glUniformMatrix4fv(glGetUniformLocation(piramideCompiledProgram, "translationMatrix"), 1, GL_FALSE, glm::value_ptr(piramideTranslationMatrix));
+			glUniformMatrix4fv(glGetUniformLocation(piramideCompiledProgram, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(piramideRotationMatrix));
+			glUniformMatrix4fv(glGetUniformLocation(piramideCompiledProgram, "scaleMatrix"), 1, GL_FALSE, glm::value_ptr(piramideScaleMatrix));*/
+
 			
 			//Paso los uniforms
-			//UniformPiramide();
+			
 
 			//Dibujo piramide
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 22);
