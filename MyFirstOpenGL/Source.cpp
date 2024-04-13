@@ -33,6 +33,10 @@ struct GameObject {
 	glm::vec3 position = glm::vec3(0.f);
 	glm::vec3 rotation = glm::vec3(0.f);
 	glm::vec3 scale = glm::vec3(1.f);
+
+	glm::vec3 forward = glm::vec3(0.f);
+	float velocity = 0.0005f;
+	float angulaVelocity = -.05f;
 };
 
 
@@ -296,11 +300,11 @@ void main() {
 	//Permitimos a GLEW usar funcionalidades experimentales
 	glewExperimental = GL_TRUE;
 
-	//Activamos cull face
-	glEnable(GL_CULL_FACE);
+	////Activamos cull face
+	//glEnable(GL_CULL_FACE);
 
-	//Indicamos lado del culling
-	glCullFace(GL_BACK);
+	////Indicamos lado del culling
+	//glCullFace(GL_BACK);
 
 	//Inicializamos GLEW y controlamos errores
 	if (glewInit() == GLEW_OK) {
@@ -429,16 +433,15 @@ void main() {
 		//Desvinculamos VAO
 		glBindVertexArray(0);
 
-		//velocidad movimiento
-		float speed = 0.5f;
-
 		//Matrices de transformacion
-		cubo.position = glm::vec3(-0.5f, 0.f, 0.f);
+		cubo.position = glm::vec3(0.f, 0.f, 0.f);
 		cubo.rotation = glm::vec3(0.f, 0.f, 0.f);
 		cubo.scale = glm::vec3(1.f, 1.f, 1.f);
 
+		cubo.forward = glm::vec3(0.f, 1.f, 0.f);
+
 		//matrices piramide
-		piramide.position = glm::vec3(0.6f, 0.f, 0.f);
+		piramide.position = glm::vec3(0.f, 0.f, 0.f);
 		piramide.rotation = glm::vec3(0.f, 0.f, 0.f);
 		piramide.scale = glm::vec3(1.f, 1.f, 1.f);
 
@@ -473,7 +476,28 @@ void main() {
 
 
 			//Up and down Movement
-			cubo.position.y += speed;
+
+			//cube rotation
+
+		/*	glm::mat4 modelMatrix = glm::mat4(1.f);
+
+			cube.position += cube.forward * cube.velocity;
+			cube.rotation += glm::vec3(0.f, 1.f, 0.f) * cube.angularVelocity;
+
+			if (cube.position.x >= 0.5f || cube.position.x <= -0.5f)
+			{
+				cube.forward = -cube.forward;
+			}
+
+			glm::mat4 cubeTransMatrix = GenerateTranslationMatrix(cube.position);
+			glm::mat4 rotationMatrix = GenerateRotationMatrix(glm::vec3(0.f, 1.f, 0.f), cube.rotation.y);
+
+			modelMatrix = cubeTransMatrix * rotationMatrix * modelMatrix;
+
+			glUniformMatrix4fv(glGetUniformLocation(myFirstCompiledProgram, "transform"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
+			*/
+			
+			cubo.position += cubo.forward * cubo.velocity;
 
 			//Generar matrices
 			glm::mat4 cuboTranslationMatrix = GenerateTranslationMatrix(cubo.position);
@@ -522,34 +546,6 @@ void main() {
 
 			//Dibujo piramide
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 22);
-
-
-
-
-			//cube rotation
-
-		/*	glm::mat4 modelMatrix = glm::mat4(1.f);
-
-			cube.position += cube.forward * cube.velocity;
-			cube.rotation += glm::vec3(0.f, 1.f, 0.f) * cube.angularVelocity;
-
-			if (cube.position.x >= 0.5f || cube.position.x <= -0.5f)
-			{
-				cube.forward = -cube.forward;
-			}
-
-			glm::mat4 cubeTransMatrix = GenerateTranslationMatrix(cube.position);
-			glm::mat4 rotationMatrix = GenerateRotationMatrix(glm::vec3(0.f, 1.f, 0.f), cube.rotation.y);
-
-			modelMatrix = cubeTransMatrix * rotationMatrix * modelMatrix;
-
-			glUniformMatrix4fv(glGetUniformLocation(myFirstCompiledProgram, "transform"), 1, GL_FALSE, glm::value_ptr(modelMatrix));
-
-
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 22); 
-			glBindVertexArray(0); */
-
-
 
 
 			//Cambiamos buffers
