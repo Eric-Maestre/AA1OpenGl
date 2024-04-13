@@ -36,7 +36,7 @@ struct GameObject {
 
 	glm::vec3 forward = glm::vec3(0.f);
 	float velocity = 0.0005f;
-	float angulaVelocity = -.05f;
+	float angularVelocity = -.05f;
 };
 
 
@@ -317,9 +317,9 @@ void main() {
 
 		//Compilar shaders
 		ShaderProgram cuboProgram, piramideProgram, orotedroProgram;
-		cuboProgram.vertexShader = LoadVertexShader("UpAndDownMovement.glsl");
+		//cuboProgram.vertexShader = LoadVertexShader("NormalVertexShader.glsl");
 		cuboProgram.fragmentShader = LoadFragmentShader("UpYellowDownOrange.glsl");
-		cuboProgram.geometryShader = LoadGeometryShader("YRotation.glsl");
+		//cuboProgram.geometryShader = LoadGeometryShader("YRotation.glsl");
 
 		//Compilar programa
 		GLuint cuboCompiledProgram;
@@ -372,7 +372,7 @@ void main() {
 		};
 
 		//Definimos modo de dibujo para cada cara
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		//Ponemos los valores en el VBO creado
 		glBufferData(GL_ARRAY_BUFFER, sizeof(hexa), hexa, GL_STATIC_DRAW);
@@ -420,7 +420,7 @@ void main() {
 			+0.6f, +0.3f, -0.25f,//5
 		};
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		glBufferData(GL_ARRAY_BUFFER, sizeof(penta), penta, GL_STATIC_DRAW);
 
@@ -450,6 +450,12 @@ void main() {
 		ortoedro.rotation = glm::vec3(0.f, 0.f, 0.f);
 		ortoedro.scale = glm::vec3(1.f, 1.f, 1.f);
 
+		//bools for Inputs
+		bool wireframeMode = false;
+
+		bool cuboRenderizado = true;
+		bool ortoedroRenderizado = true;
+		bool piramideRenderizada = true;
 
 		//Generamos el game loop
 		while (!glfwWindowShouldClose(window)) {
@@ -457,10 +463,47 @@ void main() {
 			GLdouble screenSize[2];
 			glfwGetWindowSize(window, (int*)&screenSize[0], (int*)&screenSize[1]);
 
-			glUniform2dv(glGetUniformLocation(cuboCompiledProgram, "screenSize"), 1, &screenSize[0]);
+			glUniform2dv(glGetUniformLocation(cuboCompiledProgram, "windowSize"), 1, &screenSize[0]);
 
 			//Pulleamos los eventos (botones, teclas, mouse...)
 			glfwPollEvents();
+
+			if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+			{
+				if (wireframeMode) {
+					glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				}
+				else {
+					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				}
+				wireframeMode = !wireframeMode;
+			}
+			if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+				cuboRenderizado = !cuboRenderizado;
+			if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
+				ortoedroRenderizado = !ortoedroRenderizado;
+			if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
+				piramideRenderizada = !piramideRenderizada;
+			if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
+			{
+				cubo.velocity += (cubo.velocity / 100) * 10;
+				cubo.angularVelocity += (cubo.angularVelocity/100)*10;
+				ortoedro.velocity += (ortoedro.velocity / 100) * 10;
+				ortoedro.angularVelocity += (ortoedro.angularVelocity / 100) * 10;
+				piramide.velocity += (piramide.velocity / 100) * 10;
+				piramide.angularVelocity += (piramide.angularVelocity / 100) * 10;
+			}
+			if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
+			{
+				cubo.velocity -= (cubo.velocity / 100) * 10;
+				cubo.angularVelocity -= (cubo.angularVelocity / 100) * 10;
+				ortoedro.velocity -= (ortoedro.velocity / 100) * 10;
+				ortoedro.angularVelocity -= (ortoedro.angularVelocity / 100) * 10;
+				piramide.velocity -= (piramide.velocity / 100) * 10;
+				piramide.angularVelocity -= (piramide.angularVelocity / 100) * 10;
+			}
+
+
 
 			//Limpiamos los buffers
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -511,10 +554,11 @@ void main() {
 			glUniformMatrix4fv(glGetUniformLocation(cuboCompiledProgram, "scaleMatrix"), 1, GL_FALSE, glm::value_ptr(cuboScaleMatrix));
 
 			//Paso los uniforms
-			glUniform2f(glGetUniformLocation(cuboCompiledProgram, "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
+			//glUniform2f(glGetUniformLocation(cuboCompiledProgram, "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
 		
 
 			//Dibujo cubo
+			if(cuboRenderizado)
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 22);
 
 			//ortoedro
@@ -545,6 +589,7 @@ void main() {
 			
 
 			//Dibujo piramide
+			if(piramideRenderizada)
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 22);
 
 
@@ -554,8 +599,9 @@ void main() {
 		}
 
 		//Desactivar y eliminar programa
-		//glUseProgram(0);
-		//glDeleteProgram(myFirstCompiledProgram);
+		glUseProgram(0);
+		glDeleteProgram(cuboCompiledProgram);
+
 
 	}
 	else {

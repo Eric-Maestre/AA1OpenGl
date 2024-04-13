@@ -32,7 +32,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="UpAndDownMovement.glsl">
+    <None Include="NormalVertexShader.glsl">
       <Filter>Shaders\Vertex Shader</Filter>
     </None>
     <None Include="YRotation.glsl">
