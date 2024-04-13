@@ -300,11 +300,11 @@ void main() {
 	//Permitimos a GLEW usar funcionalidades experimentales
 	glewExperimental = GL_TRUE;
 
-	////Activamos cull face
-	//glEnable(GL_CULL_FACE);
+	//Activamos cull face
+	glEnable(GL_CULL_FACE);
 
-	////Indicamos lado del culling
-	//glCullFace(GL_BACK);
+	//Indicamos lado del culling
+	glCullFace(GL_BACK);
 
 	//Inicializamos GLEW y controlamos errores
 	if (glewInit() == GLEW_OK) {
