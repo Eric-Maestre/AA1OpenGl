@@ -631,7 +631,7 @@ void main() {
 
 	}
 	else {
-		std::cout << "Ha petao." << std::endl;
+		std::cout << "Fallo" << std::endl;
 		glfwTerminate();
 	}
 
