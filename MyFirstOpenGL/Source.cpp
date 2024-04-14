@@ -8,8 +8,11 @@
 #include <fstream>
 #include <vector>
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
+#define WINDOW_WIDTH_DEFAULT 640
+#define WINDOW_HEIGHT_DEFAULT 480
+
+int windowWidth = WINDOW_WIDTH_DEFAULT;
+int windowHeight = WINDOW_HEIGHT_DEFAULT;
 
 struct ShaderProgram
 {
@@ -46,6 +49,9 @@ void Resize_Window(GLFWwindow* window, int iFrameBufferWidth, int iFrameBufferHe
 
 	//Definir nuevo tamaño del viewport
 	glViewport(0, 0, iFrameBufferWidth, iFrameBufferHeight);
+
+	windowWidth = iFrameBufferWidth;
+	windowHeight = iFrameBufferHeight;
 }
 
 
@@ -290,7 +296,7 @@ void main() {
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
 	//Inicializamos la ventana
-	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "My Engine", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "My Engine", NULL, NULL);
 
 	//Asignamos función de callback para cuando el frame buffer es modificado
 	glfwSetFramebufferSizeCallback(window, Resize_Window);
@@ -402,10 +408,6 @@ void main() {
 		glGenBuffers(1, &vboPentaedro);
 
 		//Indico que el VBO activo es el que acabo de crear y que almacenará un array. Todos los VBO que genere se asignaran al último VAO que he hecho glBindVertexArray
-		glBindBuffer(GL_ARRAY_BUFFER, vboHexaedro);
-
-		glGenBuffers(1, &vboPentaedro);
-
 		glBindBuffer(GL_ARRAY_BUFFER, vboPentaedro);
 
 		GLfloat penta[] =
@@ -436,15 +438,15 @@ void main() {
 
 		//Matrices de transformacion
 		cubo.position = glm::vec3(0.f, 0.f, 0.f);
-		cubo.rotation = glm::vec3(0.f, 1.f, 0.f);
+		cubo.rotation = glm::vec3(0.f, 0.f, 0.f);
 		cubo.scale = glm::vec3(1.f, 1.f, 1.f);
 
 		cubo.forward = glm::vec3(0.f, 1.f, 0.f);
-		cubo.forwardRotation = cubo.forward;
+		cubo.forwardRotation = glm::vec3(0.f, 1.f, 0.f);
 
 		//matrices piramide
 		piramide.position = glm::vec3(0.f, 0.f, 0.f);
-		piramide.rotation = glm::vec3(0.f, 0.f, 1.f);
+		piramide.rotation = glm::vec3(0.f, 0.f, 0.f);
 		piramide.scale = glm::vec3(1.f, 1.f, 1.f);
 
 		piramide.forward = glm::vec3(0.f, 1.f, 0.f);
@@ -452,8 +454,8 @@ void main() {
 
 		//matrices ortoedro
 		ortoedro.position = glm::vec3(0.5f, 0.f, 0.f);
-		ortoedro.rotation = glm::vec3(1.f, 1.f, 0.f);
-		ortoedro.scale = glm::vec3(1.f, 1.5f, 1.f);
+		ortoedro.rotation = glm::vec3(0.f, 0.f, 0.f);
+		ortoedro.scale = glm::vec3(1.f, 2.f, 1.f);
 
 		ortoedro.forward = glm::vec3(0.f,1.f,0.f);
 		ortoedro.forwardRotation = glm::vec3(0.f,0.f,1.f);
@@ -522,7 +524,7 @@ void main() {
 
 			
 			cubo.position += cubo.forward * cubo.velocity;
-			cubo.rotation += cubo.forwardRotation * cubo.angularVelocity;
+			cubo.rotation.y += cubo.forwardRotation.y * cubo.angularVelocity;
 
 			if (cubo.position.y >= 0.9f || cubo.position.y <= -0.9f)
 				cubo.forward = -cubo.forward;
@@ -539,7 +541,7 @@ void main() {
 			glUniformMatrix4fv(glGetUniformLocation(cuboCompiledProgram, "scaleMatrix"), 1, GL_FALSE, glm::value_ptr(cuboScaleMatrix));
 
 			//Paso los uniforms
-			glUniform2f(glGetUniformLocation(cuboCompiledProgram, "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
+			glUniform2f(glGetUniformLocation(cuboCompiledProgram, "windowSize"), windowWidth, windowHeight);
 		
 
 			//Dibujo cubo
@@ -551,10 +553,10 @@ void main() {
 
 
 			ortoedro.scale += ortoedro.forward * ortoedro.velocity;
-			ortoedro.rotation += ortoedro.forwardRotation * ortoedro.angularVelocity;
+			ortoedro.rotation.z += ortoedro.forwardRotation.z * ortoedro.angularVelocity;
 
 
-			if (ortoedro.scale.y <= 1.f || ortoedro.scale.y >= 1.5f)
+			if (ortoedro.scale.y <= 1.f || ortoedro.scale.y >= 2.f)
 				ortoedro.forward = -ortoedro.forward;
 
 			glm::mat4 ortoedroTranslationMatrix = GenerateTranslationMatrix(ortoedro.position);
@@ -565,7 +567,8 @@ void main() {
 			glUniformMatrix4fv(glGetUniformLocation(ortoedroCompiledProgram, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(ortoedroRotationMatrix));
 			glUniformMatrix4fv(glGetUniformLocation(ortoedroCompiledProgram, "scaleMatrix"), 1, GL_FALSE, glm::value_ptr(ortoedroScaleMatrix));
 
-			glUniform2f(glGetUniformLocation(ortoedroCompiledProgram, "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
+			glUniform2f(glGetUniformLocation(ortoedroCompiledProgram, "windowSize"), windowWidth, windowHeight);
+
 
 			if (ortoedroRenderizado)
 				glDrawArrays(GL_TRIANGLE_STRIP, 0, 14);
@@ -580,24 +583,33 @@ void main() {
 			//generar matrices
 
 			piramide.position += piramide.forward * piramide.velocity;
-			piramide.rotation += piramide.forwardRotation * piramide.angularVelocity;
+			piramide.rotation.x += piramide.forwardRotation.x * piramide.angularVelocity;
+			piramide.rotation.y += piramide.forwardRotation.y * piramide.angularVelocity;
 
 			if (piramide.position.y >= 0.9f || piramide.position.y <= 0.9f)
 				piramide.forward = -piramide.forward;
 
 			glm::mat4 piramideTranslationMatrix = GenerateTranslationMatrix(piramide.position);
-			glm::mat4 piramideRotationMatrix = GenerateRotationMatrix(piramide.rotation, piramide.rotation.y);
 			glm::mat4 piramideScaleMatrix = GenerateScaleMatrix(piramide.scale);
+
+			glm::mat4 rotationX = GenerateRotationMatrix(glm::vec3(1.0f, 0.0f, 0.0f), piramide.rotation.x);
+			glm::mat4 rotationY = GenerateRotationMatrix(glm::vec3(0.0f, 1.0f, 0.0f), piramide.rotation.y);
+
+			glm::mat4 piramideRotationMatrix = rotationX * rotationY;
 
 			glUniformMatrix4fv(glGetUniformLocation(piramideCompiledProgram, "translationMatrix"), 1, GL_FALSE, glm::value_ptr(piramideTranslationMatrix));
 			glUniformMatrix4fv(glGetUniformLocation(piramideCompiledProgram, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(piramideRotationMatrix));
 			glUniformMatrix4fv(glGetUniformLocation(piramideCompiledProgram, "scaleMatrix"), 1, GL_FALSE, glm::value_ptr(piramideScaleMatrix));
 
-			
 			//Paso los uniforms
 			
-			glUniform2f(glGetUniformLocation(piramideCompiledProgram, "windowSize"), WINDOW_WIDTH, WINDOW_HEIGHT);
+			glUniform2f(glGetUniformLocation(piramideCompiledProgram, "windowSize"), windowWidth, windowHeight);
 
+			GLuint timeLocation = glGetUniformLocation(piramideCompiledProgram, "time");
+
+			float currentTime = glfwGetTime();
+
+			glUniform1f(timeLocation, currentTime);
 
 			//Dibujo piramide
 			if(piramideRenderizada)
@@ -612,7 +624,9 @@ void main() {
 		//Desactivar y eliminar programa
 		glUseProgram(0);
 		glDeleteProgram(cuboCompiledProgram);
+		glDeleteProgram(ortoedroCompiledProgram);
 		glDeleteProgram(piramideCompiledProgram);
+		
 
 
 	}

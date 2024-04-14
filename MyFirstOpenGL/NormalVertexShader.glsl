@@ -9,6 +9,6 @@ uniform mat4 scaleMatrix;
 
 void main()
 {
-    mat4 matrix = translationMatrix*rotationMatrix*scaleMatrix;
+    mat4 matrix = translationMatrix * rotationMatrix * scaleMatrix;
     gl_Position = matrix * vec4(posicion, 1.0);
 }
