@@ -317,8 +317,18 @@ void main() {
 
 		//Compilar shaders
 		ShaderProgram cuboProgram, piramideProgram, orotedroProgram;
-		//cuboProgram.vertexShader = LoadVertexShader("NormalVertexShader.glsl");
+
+		//Cuando esta cativado nada se renderiza
+
+		cuboProgram.vertexShader = LoadVertexShader("NormalVertexShader.glsl");
+
+
+
 		cuboProgram.fragmentShader = LoadFragmentShader("UpYellowDownOrange.glsl");
+
+
+		//Actualmente no hay nada en el geometry dash
+
 		//cuboProgram.geometryShader = LoadGeometryShader("YRotation.glsl");
 
 		//Compilar programa
