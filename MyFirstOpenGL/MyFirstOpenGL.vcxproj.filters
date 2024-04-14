@@ -41,5 +41,8 @@
     <None Include="UpYellowDownOrange.glsl">
       <Filter>Shaders\Fragment Shader</Filter>
     </None>
+    <None Include="RGBConstantChange.glsl">
+      <Filter>Shaders\Fragment Shader</Filter>
+    </None>
   </ItemGroup>
 </Project>

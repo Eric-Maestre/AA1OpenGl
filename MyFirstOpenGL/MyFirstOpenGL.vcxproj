@@ -136,6 +136,7 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="RGBConstantChange.glsl" />
     <None Include="UpYellowDownOrange.glsl" />
     <None Include="YRotation.glsl" />
     <None Include="NormalVertexShader.glsl" />
